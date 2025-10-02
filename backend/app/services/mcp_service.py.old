@@ -1,0 +1,211 @@
+"""
+MCP (Model Context Protocol) Service
+Integration with remote MCP servers for extended capabilities
+"""
+
+from typing import Dict, Any, Optional, List
+import httpx
+from app.core.logging_config import get_logger
+from app.core.exceptions import OpenAIError
+
+logger = get_logger(__name__)
+
+
+class MCPService:
+    """
+    Service for integrating with Model Context Protocol (MCP) servers.
+
+    MCP allows extending AI models with custom tools and data sources.
+    This service provides methods to call MCP server tools.
+
+    Example MCP servers:
+    - Custom knowledge bases
+    - Vector stores
+    - External APIs
+    - Domain-specific tools
+    """
+
+    def __init__(self):
+        """Initialize MCP service"""
+        self.timeout = 30.0  # 30 seconds timeout
+        logger.info("MCP service initialized")
+
+    async def call_mcp_tool(
+        self,
+        server_url: str,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        headers: Optional[Dict[str, str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Call a tool on a remote MCP server.
+
+        Args:
+            server_url: Base URL of the MCP server
+            tool_name: Name of the tool to call
+            arguments: Tool arguments as dictionary
+            headers: Optional HTTP headers (for authentication, etc.)
+
+        Returns:
+            Tool response as dictionary
+
+        Raises:
+            OpenAIError: If MCP call fails
+
+        Example:
+            >>> result = await mcp.call_mcp_tool(
+            ...     server_url="https://my-mcp-server.com",
+            ...     tool_name="search",
+            ...     arguments={"query": "Python tutorials"}
+            ... )
+        """
+        try:
+            endpoint = f"{server_url.rstrip('/')}/tools/{tool_name}"
+
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    endpoint,
+                    json={"arguments": arguments},
+                    headers=headers or {}
+                )
+
+                response.raise_for_status()
+                result = response.json()
+
+                logger.info(f"MCP tool call successful: {tool_name} at {server_url}")
+                return result
+
+        except httpx.TimeoutException as e:
+            logger.error(f"MCP tool call timeout: {tool_name} at {server_url}")
+            raise OpenAIError(
+                message=f"MCP tool call timed out: {tool_name}",
+                details={"server_url": server_url, "tool_name": tool_name}
+            )
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                f"MCP tool call HTTP error: {tool_name} at {server_url} - "
+                f"Status {e.response.status_code}"
+            )
+            raise OpenAIError(
+                message=f"MCP tool call failed: {tool_name}",
+                details={
+                    "server_url": server_url,
+                    "tool_name": tool_name,
+                    "status_code": e.response.status_code
+                }
+            )
+        except Exception as e:
+            logger.error(f"MCP tool call error: {str(e)}")
+            raise OpenAIError(
+                message="MCP tool call failed",
+                details={"error": str(e)}
+            )
+
+    async def search_mcp_data(
+        self,
+        server_url: str,
+        query: str,
+        headers: Optional[Dict[str, str]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Search data on an MCP server using the standard 'search' tool.
+
+        Args:
+            server_url: MCP server URL
+            query: Search query string
+            headers: Optional authentication headers
+
+        Returns:
+            List of search results
+
+        Example:
+            >>> results = await mcp.search_mcp_data(
+            ...     server_url="https://my-knowledge-base.com",
+            ...     query="AI best practices"
+            ... )
+        """
+        try:
+            result = await self.call_mcp_tool(
+                server_url=server_url,
+                tool_name="search",
+                arguments={"query": query},
+                headers=headers
+            )
+
+            # Extract results from response
+            # MCP search tool returns: {"results": [...]}
+            return result.get("results", [])
+
+        except Exception as e:
+            logger.error(f"MCP search error: {str(e)}")
+            return []
+
+    async def fetch_mcp_document(
+        self,
+        server_url: str,
+        document_id: str,
+        headers: Optional[Dict[str, str]] = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Fetch a document from an MCP server using the 'fetch' tool.
+
+        Args:
+            server_url: MCP server URL
+            document_id: Document identifier
+            headers: Optional authentication headers
+
+        Returns:
+            Document data or None if not found
+
+        Example:
+            >>> doc = await mcp.fetch_mcp_document(
+            ...     server_url="https://my-docs.com",
+            ...     document_id="doc-123"
+            ... )
+        """
+        try:
+            result = await self.call_mcp_tool(
+                server_url=server_url,
+                tool_name="fetch",
+                arguments={"id": document_id},
+                headers=headers
+            )
+
+            return result
+
+        except Exception as e:
+            logger.error(f"MCP fetch error: {str(e)}")
+            return None
+
+    async def test_mcp_connection(self, server_url: str) -> bool:
+        """
+        Test connection to an MCP server.
+
+        Args:
+            server_url: MCP server URL
+
+        Returns:
+            True if connection successful, False otherwise
+        """
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get(f"{server_url.rstrip('/')}/health")
+                return response.status_code == 200
+        except Exception as e:
+            logger.warning(f"MCP connection test failed for {server_url}: {str(e)}")
+            return False
+
+
+def get_mcp_service() -> MCPService:
+    """
+    Get MCP service instance.
+    Use as FastAPI dependency.
+
+    Example:
+        @app.post("/mcp-search")
+        async def mcp_search(
+            mcp: MCPService = Depends(get_mcp_service)
+        ):
+            return await mcp.search_mcp_data(url, query)
+    """
+    return MCPService()

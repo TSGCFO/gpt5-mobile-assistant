@@ -1,0 +1,80 @@
+# Docker Compose Configuration
+# PostgreSQL and Redis for local development
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: gpt5-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gpt5user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gpt5password}
+      POSTGRES_DB: ${POSTGRES_DB:-gpt5_assistant}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gpt5user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gpt5-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: gpt5-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gpt5-network
+
+  # Backend API (Optional - uncomment to run backend in Docker)
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: gpt5-backend
+  #   environment:
+  #     - DATABASE_URL=postgresql://${POSTGRES_USER:-gpt5user}:${POSTGRES_PASSWORD:-gpt5password}@postgres:5432/${POSTGRES_DB:-gpt5_assistant}
+  #     - REDIS_URL=redis://redis:6379/0
+  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./backend:/app
+  #   networks:
+  #     - gpt5-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  gpt5-network:
+    driver: bridge
+
+# Usage:
+# Start services: docker-compose up -d
+# Stop services: docker-compose down
+# View logs: docker-compose logs -f
+# Clean volumes: docker-compose down -v
