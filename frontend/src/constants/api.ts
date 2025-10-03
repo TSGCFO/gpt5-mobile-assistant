@@ -2,10 +2,9 @@
  * API Constants
  */
 
-import Constants from 'expo-constants';
-
 // Get API base URL from environment variables
-export const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl ||
+// Modern Expo (SDK 50+) uses EXPO_PUBLIC_ prefix for environment variables
+export const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL ||
   'http://localhost:8000/api/v1';
 

@@ -4,7 +4,7 @@
  */
 
 import apiClient from './client';
-import * as SecureStore from 'expo-secure-store';
+import { secureStorage } from '@/utils/secureStorage';
 import { API_ENDPOINTS } from '@/constants/api';
 import { User, RegisterRequest, LoginRequest } from '@/types/auth.types';
 
@@ -16,8 +16,8 @@ export const authApi = {
     const response = await apiClient.post<User>(API_ENDPOINTS.AUTH_REGISTER, data);
 
     // After successful registration, store credentials for auto-login
-    await SecureStore.setItemAsync('username', data.username);
-    await SecureStore.setItemAsync('password', data.password);
+    await secureStorage.setItem('username', data.username);
+    await secureStorage.setItem('password', data.password);
 
     return response.data;
   },
@@ -40,8 +40,8 @@ export const authApi = {
     );
 
     // If successful, store credentials securely
-    await SecureStore.setItemAsync('username', data.username);
-    await SecureStore.setItemAsync('password', data.password);
+    await secureStorage.setItem('username', data.username);
+    await secureStorage.setItem('password', data.password);
 
     return response.data.user;
   },
@@ -50,8 +50,8 @@ export const authApi = {
    * Logout (clear stored credentials)
    */
   async logout(): Promise<void> {
-    await SecureStore.deleteItemAsync('username');
-    await SecureStore.deleteItemAsync('password');
+    await secureStorage.deleteItem('username');
+    await secureStorage.deleteItem('password');
   },
 
   /**
@@ -59,8 +59,8 @@ export const authApi = {
    */
   async isAuthenticated(): Promise<boolean> {
     try {
-      const username = await SecureStore.getItemAsync('username');
-      const password = await SecureStore.getItemAsync('password');
+      const username = await secureStorage.getItem('username');
+      const password = await secureStorage.getItem('password');
       return !!(username && password);
     } catch (error) {
       return false;
@@ -76,7 +76,9 @@ export const authApi = {
   },
 };
 
-// Helper function for Base64 encoding
+// Helper function for Base64 encoding (React Native compatible)
 function btoa(str: string): string {
-  return Buffer.from(str, 'binary').toString('base64');
+  // Use base-64 package which is React Native compatible
+  const { encode } = require('base-64');
+  return encode(str);
 }

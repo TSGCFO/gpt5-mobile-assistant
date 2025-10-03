@@ -4,7 +4,7 @@
  */
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import { secureStorage } from '@/utils/secureStorage';
 import { API_BASE_URL, API_TIMEOUT } from '@/constants/api';
 
 // Create axios instance
@@ -21,8 +21,8 @@ apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
       // Get stored credentials from secure storage
-      const username = await SecureStore.getItemAsync('username');
-      const password = await SecureStore.getItemAsync('password');
+      const username = await secureStorage.getItem('username');
+      const password = await secureStorage.getItem('password');
 
       if (username && password) {
         // Create Basic Auth header
@@ -52,8 +52,8 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // Clear stored credentials
       try {
-        await SecureStore.deleteItemAsync('username');
-        await SecureStore.deleteItemAsync('password');
+        await secureStorage.deleteItem('username');
+        await secureStorage.deleteItem('password');
       } catch (clearError) {
         console.error('Error clearing credentials:', clearError);
       }
@@ -79,7 +79,9 @@ apiClient.interceptors.response.use(
 
 export default apiClient;
 
-// Helper function for Base64 encoding (compatible with React Native)
+// Helper function for Base64 encoding (React Native compatible)
 function btoa(str: string): string {
-  return Buffer.from(str, 'binary').toString('base64');
+  // Use base-64 package which is React Native compatible
+  const { encode } = require('base-64');
+  return encode(str);
 }

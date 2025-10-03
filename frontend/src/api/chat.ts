@@ -36,12 +36,12 @@ export const chatApi = {
     onError: (error: string) => void
   ): Promise<void> {
     const { API_BASE_URL } = await import('@/constants/api');
-    const SecureStore = await import('expo-secure-store');
+    const { secureStorage } = await import('@/utils/secureStorage');
 
     try {
       // Get credentials
-      const username = await SecureStore.getItemAsync('username');
-      const password = await SecureStore.getItemAsync('password');
+      const username = await secureStorage.getItem('username');
+      const password = await secureStorage.getItem('password');
 
       if (!username || !password) {
         throw new Error('Not authenticated');
@@ -129,7 +129,9 @@ export const chatApi = {
   },
 };
 
-// Helper function for Base64 encoding
+// Helper function for Base64 encoding (React Native compatible)
 function btoa(str: string): string {
-  return Buffer.from(str, 'binary').toString('base64');
+  // Use base-64 package which is React Native compatible
+  const { encode } = require('base-64');
+  return encode(str);
 }
