@@ -9,7 +9,11 @@
       "Bash(npm cache clean:*)",
       "Bash(npm config get:*)",
       "Bash(npm config:*)",
-      "Bash(setx:*)"
+      "Bash(setx:*)",
+      "Bash(test:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

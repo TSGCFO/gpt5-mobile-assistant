@@ -36,7 +36,7 @@ export const chatApi = {
     onError: (error: string) => void
   ): Promise<void> {
     const { API_BASE_URL } = await import('@/constants/api');
-    const * as SecureStore from 'expo-secure-store';
+    const SecureStore = await import('expo-secure-store');
 
     try {
       // Get credentials
