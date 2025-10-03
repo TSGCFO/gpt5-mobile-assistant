@@ -3,9 +3,19 @@
     "allow": [
       "Bash(docker-compose:*)",
       "Bash(cat:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(where npx)",
+      "Bash(npm search:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(npm config get:*)",
+      "Bash(npm config:*)",
+      "Bash(setx:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "firecrawl-mcp"
+  ]
 }

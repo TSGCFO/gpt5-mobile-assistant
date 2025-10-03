@@ -278,3 +278,4 @@ Example of validation steps:
 3. Confirm all information against the documents provided to ensure accuracy.
 4. Implement necessary changes based on your detailed analysis.
 5. Validate the changes again after implementation to ensure they are accurate and consistent.
+- @.mcp.json is where MCP servers are configured for claude code only.
