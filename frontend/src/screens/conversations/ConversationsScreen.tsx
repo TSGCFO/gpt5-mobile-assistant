@@ -39,7 +39,7 @@ export const ConversationsScreen: React.FC<ConversationsScreenProps> = ({
   const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(fetchConversations());
+    dispatch(fetchConversations({}));
   }, []);
 
   const handleConversationPress = (conversationId: string) => {

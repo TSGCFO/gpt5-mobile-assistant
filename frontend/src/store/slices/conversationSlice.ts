@@ -42,7 +42,7 @@ export const fetchConversationDetails = createAsyncThunk(
 
 export const createConversation = createAsyncThunk(
   'conversation/create',
-  async (title?: string, { rejectWithValue }) => {
+  async ({ title }: { title?: string } = {}, { rejectWithValue }) => {
     try {
       const conversation = await conversationApi.createConversation(title);
       return conversation;
