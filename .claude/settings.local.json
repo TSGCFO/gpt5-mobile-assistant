@@ -13,7 +13,14 @@
       "Bash(test:*)",
       "Bash(npm install)",
       "Bash(npm install:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nImplement complete frontend UI for GPT-5 Mobile Assistant\n\n## Frontend Implementation\n\n### Theme System\n- Created color palette, spacing, and typography systems\n- Consistent design tokens across the application\n\n### Common Components\n- Button: Multi-variant button (primary, secondary, outline, text)\n- Input: Text input with label, error handling, and password visibility toggle\n\n### Authentication Screens\n- LoginScreen: User login with Basic Auth\n- RegisterScreen: New user registration with validation\n\n### Chat Components\n- MessageBubble: Displays user/assistant messages with citations and metadata\n- ChatInput: Message input with send button\n- ChatScreen: Main chat interface with streaming support\n\n### Conversations\n- ConversationsScreen: List view of all conversations with create/delete actions\n\n### Navigation\n- AuthNavigator: Auth flow (Login/Register)\n- MainNavigator: Authenticated flow (Chat/Conversations)\n- RootNavigator: Root-level navigation with auth state management\n\n### Configuration\n- App.tsx: Main app entry point with Redux Provider and PersistGate\n- Environment configuration (.env) for API base URL\n- Fixed syntax errors in API files\n\n### Dependencies\n- Installed all required npm packages (1028 packages)\n- Resolved peer dependency conflicts with --legacy-peer-deps\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git commit:*)",
+      "Bash(npx expo install:*)",
+      "Bash(ipconfig)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": []
