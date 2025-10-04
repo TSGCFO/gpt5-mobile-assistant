@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(../.venv/Scripts/python.exe test_connection.py:*)",
-      "Bash(../.venv/Scripts/python.exe -m alembic downgrade base)"
+      "Bash(../.venv/Scripts/python.exe -m alembic downgrade base)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint)",
+      "Bash(npx expo lint:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []
