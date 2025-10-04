@@ -20,7 +20,7 @@ class Message(Base):
         conversation_id: Foreign key to parent conversation
         role: Message role ('user' or 'assistant')
         content: Message text content
-        metadata: Additional data (tokens, model, citations, tool_calls)
+        message_metadata: Additional data (tokens, model, citations, tool_calls)
         created_at: Message creation timestamp
         conversation: Relationship to Conversation model
     """
@@ -58,7 +58,7 @@ class Message(Base):
         comment="Message text content"
     )
 
-    metadata = Column(
+    message_metadata = Column(
         JSONB,
         nullable=False,
         default=dict,
@@ -91,6 +91,6 @@ class Message(Base):
             "conversation_id": str(self.conversation_id),
             "role": self.role,
             "content": self.content,
-            "metadata": self.metadata,
+            "metadata": self.message_metadata,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

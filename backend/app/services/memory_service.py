@@ -123,7 +123,7 @@ class MemoryService:
                 conversation_id=conversation_id,
                 role=role,
                 content=content,
-                metadata=metadata or {}
+                message_metadata=metadata or {}
             )
 
             self.db.add(message)

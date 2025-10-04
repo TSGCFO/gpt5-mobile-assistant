@@ -270,12 +270,15 @@ headers: { Authorization: `Basic ${credentials}` }
 ```
 
 Credentials stored securely in `expo-secure-store` on device.
+
 - Before replying to any user message, it is essential to take the time to thoroughly review and examine the contents of the document located at @Docs\expo-llms-full.txt, along with all relevant and pertinent files that can be found in the directory @Docs\responses-api\. It is of utmost importance to carefully analyze the user message to avoid making any assumptions that could potentially lead to the dissemination of misinformation. Confirm all information by cross-referencing it meticulously with the contents of @Docs\expo-llms-full.txt and the various files located in @Docs\responses-api\. Repeat this validation process with great attention to detail prior to making any edits to existing files, creating new files, or implementing any other types of changes that may be necessary. Once you have completed the task at hand, conduct a final and thorough validation of the modifications that were made to ensure they are accurate, consistent, and meet all required standards.
 
 Example of validation steps:
+
 1. Review the relevant documents thoroughly and comprehensively.
 2. Analyze the user message carefully and critically without making any assumptions.
 3. Confirm all information against the documents provided to ensure accuracy.
 4. Implement necessary changes based on your detailed analysis.
 5. Validate the changes again after implementation to ensure they are accurate and consistent.
+
 - @.mcp.json is where MCP servers are configured for claude code only.

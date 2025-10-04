@@ -219,7 +219,7 @@ async def get_conversation(
                     conversation_id=str(msg.conversation_id),
                     role=msg.role,
                     content=msg.content,
-                    metadata=msg.metadata,
+                    metadata=msg.message_metadata,
                     created_at=msg.created_at
                 )
                 for msg in messages
@@ -366,7 +366,7 @@ async def get_conversation_messages(
                 conversation_id=str(msg.conversation_id),
                 role=msg.role,
                 content=msg.content,
-                metadata=msg.metadata,
+                metadata=msg.message_metadata,
                 created_at=msg.created_at
             )
             for msg in messages
