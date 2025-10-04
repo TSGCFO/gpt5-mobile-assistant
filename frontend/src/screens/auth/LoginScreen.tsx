@@ -94,7 +94,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             />
 
             <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
+              <Text style={styles.registerText}>Don&apos;t have an account? </Text>
               <Button
                 title="Register"
                 variant="text"

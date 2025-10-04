@@ -9,8 +9,9 @@ Full-stack mobile application with Expo React Native frontend and FastAPI backen
 **Stack:**
 
 - Backend: FastAPI + Python 3.11+ + PostgreSQL + Redis
-- Frontend: Expo SDK 52 + React Native + TypeScript + Redux
+- Frontend: Expo SDK 54 + React Native 0.81 + React 19.1 + TypeScript + Redux
 - AI: OpenAI GPT-5 (Responses API) with reasoning_effort="medium"
+- Architecture: React Native New Architecture enabled
 
 ## Architecture
 
@@ -105,17 +106,23 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```bash
 # Initial setup
 cd frontend
-npm install
+npm install --legacy-peer-deps  # React 19 peer dependency conflicts
 
 # Configure API URL
 cp .env.example .env
 # Edit EXPO_PUBLIC_API_BASE_URL with your machine's IP
 
-# Start Expo dev server
-npm start
+# Start Expo dev server (clears cache on first run after upgrade)
+npm start -- --clear
 
 # Run on specific platform
 npm run android  # or 'ios' or 'web'
+
+# Lint code
+npm run lint
+
+# Type check
+npx tsc --noEmit
 ```
 
 ### Database Management
@@ -218,7 +225,62 @@ Critical settings in `.env`:
   - Android emulator: Use `http://10.0.2.2:8000/api/v1`
   - iOS simulator: Use `http://localhost:8000/api/v1`
 
+## Frontend Configuration
+
+### Expo SDK 54
+
+This project uses Expo SDK 54 with the following key features:
+
+**React Native New Architecture:**
+- Enabled by default in `app.json` (`newArchEnabled: true`)
+- Better performance and modern React features
+- SDK 54 is the final release supporting Legacy Architecture
+- SDK 55+ will only support New Architecture
+
+**ESLint Configuration:**
+- Uses ESLint 9.x with Flat Config format (`eslint.config.js`)
+- Legacy `.eslintrc.js` format no longer supported
+- Configuration includes Node.js globals for metro.config.js and babel.config.js
+- Run `npm run lint` to check code quality
+
+**TypeScript:**
+- TypeScript 5.9.2
+- `moduleResolution: "bundler"` for SDK 54 compatibility
+- Path aliases configured (@/, @/components/*, etc.)
+
+**Key SDK 54 Changes:**
+- React 19.1.0 (from 18.3.1)
+- React Native 0.81 (from 0.76)
+- Precompiled React Native for iOS (faster builds)
+- Android targets API 36 (Android 16)
+- Edge-to-edge always enabled on Android
+- Experimental autolinking module resolution enabled
+
+**Documentation:**
+- See `Docs/expo-sdk-54-upgrade.md` for complete upgrade guide
+- See `Docs/expo-eslint-config.md` for ESLint configuration details
+
+### Dependencies
+
+**Critical peer dependencies:**
+- `react-dom@19.1.0` - Required by react-native-web
+- `react-native-worklets@0.5.1` - Required by react-native-reanimated v4
+
+**Install with:**
+```bash
+npm install --legacy-peer-deps
+```
+
+The `--legacy-peer-deps` flag is required due to React 19 peer dependency conflicts.
+
 ## Troubleshooting
+
+**Expo Doctor Checks:**
+
+Run diagnostics to check for compatibility issues:
+```bash
+npx expo-doctor@latest
+```
 
 **OpenAI API Errors:**
 

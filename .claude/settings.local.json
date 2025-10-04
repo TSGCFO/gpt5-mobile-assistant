@@ -6,7 +6,8 @@
       "Bash(npx tsc:*)",
       "Bash(npm run lint)",
       "Bash(npx expo lint:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx:*)"
     ],
     "deny": [],
     "ask": []

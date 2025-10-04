@@ -1,4 +1,3 @@
-/* eslint-env node */
 /**
  * Metro Configuration
  * Metro bundler configuration for React Native

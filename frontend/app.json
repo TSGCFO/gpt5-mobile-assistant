@@ -5,12 +5,19 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gpt5assistant.app"
     },
     "android": {
-      "package": "com.gpt5assistant.app"
+      "package": "com.gpt5assistant.app",
+      "navigationBar": {
+        "enforceContrast": true
+      }
+    },
+    "experiments": {
+      "autolinkingModuleResolution": true
     },
     "plugins": [
       "expo-secure-store"
