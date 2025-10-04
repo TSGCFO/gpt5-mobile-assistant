@@ -122,11 +122,15 @@ class OpenAIService:
             # Extract citations (web search results)
             citations = self._extract_citations(response)
 
-            # Extract usage information
+            # Extract usage information with safe nested attribute access
             usage = {
                 "input_tokens": response.usage.input_tokens,
                 "output_tokens": response.usage.output_tokens,
-                "reasoning_tokens": getattr(response.usage.output_tokens_details, "reasoning_tokens", None),
+                "reasoning_tokens": getattr(
+                    getattr(response.usage, "output_tokens_details", None),
+                    "reasoning_tokens",
+                    None
+                ),
                 "total_tokens": response.usage.total_tokens,
             }
 
@@ -231,28 +235,44 @@ class OpenAIService:
 
             # Stream events
             async for event in stream:
+                # Base event structure with common fields from documentation
                 event_dict = {
                     "type": event.type if hasattr(event, "type") else "unknown",
-                    "event": event,
+                    "event_id": getattr(event, "event_id", None),
+                    "response_id": getattr(event, "response_id", None),
+                    "sequence_number": getattr(event, "sequence_number", None),
                 }
 
-                # Extract delta for text events
-                if hasattr(event, "delta"):
-                    event_dict["delta"] = event.delta
-
-                # Extract specific event data
+                # Extract event-specific data based on type
                 if event.type == "response.output_text.delta":
-                    event_dict["text_delta"] = event.delta
+                    # Text delta event with incremental content
+                    event_dict["delta"] = event.delta
+                    event_dict["item_id"] = getattr(event, "item_id", None)
+                    event_dict["output_index"] = getattr(event, "output_index", None)
+                    event_dict["content_index"] = getattr(event, "content_index", None)
+
                 elif event.type == "response.output_text.done":
-                    event_dict["text_done"] = True
+                    # Text completion event
+                    event_dict["item_id"] = getattr(event, "item_id", None)
+                    event_dict["output_index"] = getattr(event, "output_index", None)
+                    event_dict["content_index"] = getattr(event, "content_index", None)
+                    event_dict["text"] = getattr(event, "text", "")
+
                 elif event.type == "response.completed":
-                    event_dict["completed"] = True
-                    if hasattr(event, "response") and hasattr(event.response, "usage"):
-                        event_dict["usage"] = {
-                            "input_tokens": event.response.usage.input_tokens,
-                            "output_tokens": event.response.usage.output_tokens,
-                            "total_tokens": event.response.usage.total_tokens,
-                        }
+                    # Response completion with usage info
+                    if hasattr(event, "response"):
+                        response_obj = event.response
+                        if hasattr(response_obj, "usage"):
+                            event_dict["usage"] = {
+                                "input_tokens": response_obj.usage.input_tokens,
+                                "output_tokens": response_obj.usage.output_tokens,
+                                "total_tokens": response_obj.usage.total_tokens,
+                                "reasoning_tokens": getattr(
+                                    getattr(response_obj.usage, "output_tokens_details", None),
+                                    "reasoning_tokens",
+                                    None
+                                ),
+                            }
 
                 yield event_dict
 

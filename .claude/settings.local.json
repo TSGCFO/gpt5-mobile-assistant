@@ -6,7 +6,11 @@
       "Bash(../.venv/Scripts/python.exe -c \"import openai; print(f''OpenAI version: {openai.__version__}'')\")",
       "mcp__firecrawl-mcp__firecrawl_map",
       "Bash(../.venv/Scripts/python.exe -c \"import json; data = json.load(open(''firecrawl-map-response.json'')); print(f''Total URLs: {len(data[\"\"links\"\"])}'')\")",
-      "Bash(../.venv/Scripts/python.exe:*)"
+      "Bash(../.venv/Scripts/python.exe:*)",
+      "Bash(source:*)",
+      "mcp__firecrawl-mcp__firecrawl_scrape",
+      "Bash(cat:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

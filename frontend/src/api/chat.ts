@@ -6,6 +6,7 @@
 import apiClient from './client';
 import { API_ENDPOINTS } from '@/constants/api';
 import { ChatRequest, ChatResponse, Message } from '@/types/chat.types';
+// XMLHttpRequest is natively available in React Native for SSE streaming
 
 export const chatApi = {
   /**
@@ -20,8 +21,8 @@ export const chatApi = {
   },
 
   /**
-   * Stream chat completion (handled separately due to SSE)
-   * This returns the fetch response for streaming
+   * Stream chat completion using Server-Sent Events (SSE)
+   * Uses XMLHttpRequest (native to React Native) for reliable SSE streaming
    */
   async streamMessage(
     request: {
@@ -50,40 +51,25 @@ export const chatApi = {
       // Create Basic Auth header
       const credentials = btoa(`${username}:${password}`);
 
-      // Use fetch for streaming
-      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.CHAT_STREAM}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${credentials}`,
-        },
-        body: JSON.stringify(request),
-      });
+      // Use XMLHttpRequest for SSE streaming (native to React Native)
+      const xhr = new XMLHttpRequest();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      // Read stream
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (!reader) {
-        throw new Error('No response body');
-      }
+      xhr.open('POST', `${API_BASE_URL}${API_ENDPOINTS.CHAT_STREAM}`);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', `Basic ${credentials}`);
 
       let buffer = '';
 
-      while (true) {
-        const { done, value } = await reader.read();
+      // Handle progressive response data
+      xhr.onprogress = () => {
+        const responseText = xhr.responseText;
 
-        if (done) break;
+        // Get only new data since last progress event
+        const newData = responseText.substring(buffer.length);
+        buffer = responseText;
 
-        buffer += decoder.decode(value, { stream: true });
-
-        // Process complete SSE messages
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        // Process SSE messages
+        const lines = newData.split('\n');
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
@@ -92,18 +78,37 @@ export const chatApi = {
 
               // Handle different event types
               if (eventData.type === 'response.output_text.delta') {
-                onChunk(eventData.text_delta || eventData.delta || '');
+                onChunk(eventData.delta || '');
               } else if (eventData.type === 'response.completed') {
                 onComplete();
-              } else if (eventData.type === 'error' || eventData.error) {
+              } else if (eventData.type === 'error') {
                 onError(eventData.error || 'Streaming error');
               }
             } catch (parseError) {
-              console.warn('Failed to parse SSE event:', parseError);
+              // Ignore parse errors for incomplete messages
             }
           }
         }
-      }
+      };
+
+      // Handle request completion
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          // Stream completed successfully
+          console.log('SSE stream completed');
+        } else {
+          onError(`HTTP error: ${xhr.status}`);
+        }
+      };
+
+      // Handle errors
+      xhr.onerror = () => {
+        onError('Network error during streaming');
+      };
+
+      // Send request
+      xhr.send(JSON.stringify(request));
+
     } catch (error: any) {
       onError(error.message || 'Failed to stream message');
     }

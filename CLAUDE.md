@@ -10,8 +10,9 @@ Full-stack mobile application with Expo React Native frontend and FastAPI backen
 
 - Backend: FastAPI + Python 3.11+ + PostgreSQL + Redis
 - Frontend: Expo SDK 54 + React Native 0.81 + React 19.1 + TypeScript + Redux
-- AI: OpenAI GPT-5 (Responses API) with reasoning_effort="medium"
+- AI: OpenAI GPT-5 (Responses API v2.1.0+) with reasoning_effort="medium"
 - Architecture: React Native New Architecture enabled
+- Security: PassLib bcrypt_sha256 with bcrypt 4.2.1
 
 ## Architecture
 
