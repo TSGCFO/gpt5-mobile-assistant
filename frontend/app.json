@@ -11,13 +11,7 @@
       "bundleIdentifier": "com.gpt5assistant.app"
     },
     "android": {
-      "package": "com.gpt5assistant.app",
-      "navigationBar": {
-        "enforceContrast": true
-      }
-    },
-    "experiments": {
-      "autolinkingModuleResolution": true
+      "package": "com.gpt5assistant.app"
     },
     "plugins": [
       "expo-secure-store"

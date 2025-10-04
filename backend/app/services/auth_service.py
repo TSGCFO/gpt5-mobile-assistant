@@ -61,6 +61,8 @@ class AuthService:
         """
         try:
             # Validate password strength
+            # Note: Using bcrypt_sha256, so no 72-byte limit
+            # See: Docs/passlib/lib/passlib.hash.bcrypt_sha256.md
             is_strong, error_msg = is_password_strong(password)
             if not is_strong:
                 raise ValidationError(
@@ -138,6 +140,8 @@ class AuthService:
         """
         try:
             # Find user by username
+            # Note: Using bcrypt_sha256, supports any password length
+            # See: Docs/passlib/lib/passlib.hash.bcrypt_sha256.md
             user = self.db.query(User)\
                 .filter(User.username == username)\
                 .first()

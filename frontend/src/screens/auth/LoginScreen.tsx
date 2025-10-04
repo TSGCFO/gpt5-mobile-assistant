@@ -83,6 +83,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               onChangeText={setPassword}
               secureTextEntry
               autoCapitalize="none"
+              maxLength={72}
             />
 
             <Button

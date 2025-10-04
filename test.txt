@@ -1,0 +1,21 @@
+    curl --request POST \
+    --url https://api.firecrawl.dev/v2/batch/scrape \
+    --header 'Authorization: Bearer fc-1721917daf454aebb55358733b2204b9' \
+    --header 'Content-Type: application/json' \
+    --data '{
+    "urls": [
+        "https://passlib.readthedocs.io/en/stable/lib/passlib.hash.bcrypt_sha256.html,
+    https://passlib.readthedocs.io/en/stable/lib/passlib.hash.bcrypt.html,
+    https://passlib.readthedocs.io/en/stable,
+    https://passlib.readthedocs.io/en/latest,
+    https://passlib.readthedocs.io/en/1.7.3,
+    https://passlib.readthedocs.io,
+    https://passlib.readthedocs.io/en/stable/history,
+    https://passlib.readthedocs.io/en/stable/lib"
+    ],
+    "ignoreInvalidURLs": true,
+    "formats": [
+        "markdown"
+    ],
+    "onlyMainContent": true
+    }'
