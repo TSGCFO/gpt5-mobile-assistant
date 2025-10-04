@@ -1,0 +1,3 @@
+<!-- Source: https://platform.openai.com/docs/api-reference/realtime-beta-server-events/response/mcp_call/failed -->
+
+Signing in...

@@ -37,7 +37,15 @@ HTTP Request → Middleware (auth/rate-limit) → API Endpoint → Service Layer
 
 3. **Authentication Flow**: HTTP Basic Auth via `get_current_user()` dependency. Credentials sent with every request, validated against database, no session/token management needed.
 
-4. **Streaming Architecture**: SSE (Server-Sent Events) for streaming responses. The `/chat/stream` endpoint uses async generators to yield OpenAI events in real-time.
+4. **Password Security**: Uses PassLib's `bcrypt_sha256` for password hashing.
+   - **Algorithm**: bcrypt_sha256 (pre-hashes with HMAC-SHA256 before bcrypt)
+   - **Rounds**: 12 (PassLib default, targets ~300ms per hash)
+   - **Password Length**: Supports passwords of ANY length (no 72-byte bcrypt limitation)
+   - **Security**: Enhanced security vs plain bcrypt (fully mixes all password bytes)
+   - **Configuration**: `backend/app/core/security.py`
+   - **Documentation**: See `Docs/passlib/` for complete PassLib reference (77 files)
+
+5. **Streaming Architecture**: SSE (Server-Sent Events) for streaming responses. The `/chat/stream` endpoint uses async generators to yield OpenAI events in real-time.
 
 ### OpenAI Integration Specifics
 

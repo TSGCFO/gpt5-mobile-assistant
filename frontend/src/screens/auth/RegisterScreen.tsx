@@ -65,14 +65,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       return;
     }
 
-    if (password.length > 72) {
-      Alert.alert(
-        'Validation Error',
-        'Password must be 72 characters or less'
-      );
-      return;
-    }
-
     if (password !== confirmPassword) {
       Alert.alert('Validation Error', 'Passwords do not match');
       return;
@@ -143,12 +135,11 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
             <Input
               label="Password"
-              placeholder="Create a password (8-72 characters)"
+              placeholder="Create a password (min 8 characters)"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
               autoCapitalize="none"
-              maxLength={72}
             />
 
             <Input
@@ -158,7 +149,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
               onChangeText={setConfirmPassword}
               secureTextEntry
               autoCapitalize="none"
-              maxLength={72}
             />
 
             <Button

@@ -1,0 +1,3 @@
+<!-- Source: https://platform.openai.com/docs/api-reference/realtime-beta-server-events/response/function_call_arguments/delta -->
+
+Signing in...

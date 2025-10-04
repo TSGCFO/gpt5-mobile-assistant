@@ -19,3 +19,18 @@
     ],
     "onlyMainContent": true
     }'
+
+
+   $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+curl.exe --request POST `
+  --url https://api.firecrawl.dev/v2/map `
+  --header 'Authorization: Bearer fc-1721917daf454aebb55358733b2204b9' `
+  --header 'Content-Type: application/json' `
+  --data '{
+  "url": "https://platform.openai.com/docs",
+  "search": "latest-model/",
+  "sitemap": "include",
+  "includeSubdomains": true,
+  "ignoreQueryParameters": true,
+  "limit": 100000
+}' > "C:\Users\Hassan\Projects\gpt5-mobile-assistant\Docs\firecrawl-model-gpt5.json"
