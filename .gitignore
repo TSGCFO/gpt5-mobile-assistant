@@ -1,1 +1,6 @@
 !Docs/
+!*.md
+.env.production
+.env.staging
+.env
+nul
