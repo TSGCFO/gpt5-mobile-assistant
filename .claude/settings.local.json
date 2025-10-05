@@ -15,6 +15,9 @@
     "deny": [],
     "ask": []
   },
+  "env": {
+	  "FIRECRAWL_API_TOKEN": "fc-1721917daf454aebb55358733b2204b9"
+	},
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "firecrawl-mcp"

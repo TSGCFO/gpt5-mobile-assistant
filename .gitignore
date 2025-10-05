@@ -4,3 +4,6 @@
 .env.staging
 .env
 nul
+/.claude/*.json
+test.txt
+
